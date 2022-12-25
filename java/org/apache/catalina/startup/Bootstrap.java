@@ -52,8 +52,8 @@ public final class Bootstrap {
     /**
      * Daemon object used by main.
      */
-    private static final Object daemonLock = new Object();
-    private static volatile Bootstrap daemon = null;
+    private static final Object daemonLock = new Object(); // 守护线程锁对象
+    private static volatile Bootstrap daemon = null; // 守护线程锁
 
     private static final File catalinaBaseFile;
     private static final File catalinaHomeFile;
@@ -62,10 +62,10 @@ public final class Bootstrap {
 
     static {
         // Will always be non-null
-        String userDir = System.getProperty("user.dir");
+        String userDir = System.getProperty("user.dir"); // 工作目录
 
         // Home first
-        String home = System.getProperty(Constants.CATALINA_HOME_PROP);
+        String home = System.getProperty(Constants.CATALINA_HOME_PROP); // catalina.home
         File homeFile = null;
 
         if (home != null) {
@@ -437,18 +437,18 @@ public final class Bootstrap {
      */
     public static void main(String args[]) {
 
-        synchronized (daemonLock) {
-            if (daemon == null) {
+        synchronized (daemonLock) { // 同步锁
+            if (daemon == null) { // 守护线程不存在
                 // Don't set daemon until init() has completed
-                Bootstrap bootstrap = new Bootstrap();
+                Bootstrap bootstrap = new Bootstrap(); // 启动器
                 try {
-                    bootstrap.init();
+                    bootstrap.init(); // 初始化
                 } catch (Throwable t) {
                     handleThrowable(t);
                     t.printStackTrace();
                     return;
                 }
-                daemon = bootstrap;
+                daemon = bootstrap; // 守护线程
             } else {
                 // When running as a service the call to stop will be on a new
                 // thread so make sure the correct class loader is used to
@@ -463,23 +463,23 @@ public final class Bootstrap {
                 command = args[args.length - 1];
             }
 
-            if (command.equals("startd")) {
+            if (command.equals("startd")) { // 启动守护线程
                 args[args.length - 1] = "start";
                 daemon.load(args);
                 daemon.start();
-            } else if (command.equals("stopd")) {
+            } else if (command.equals("stopd")) { // 停止守护线程
                 args[args.length - 1] = "stop";
                 daemon.stop();
-            } else if (command.equals("start")) {
+            } else if (command.equals("start")) { // 启动线程
                 daemon.setAwait(true);
                 daemon.load(args);
                 daemon.start();
                 if (null == daemon.getServer()) {
                     System.exit(1);
                 }
-            } else if (command.equals("stop")) {
+            } else if (command.equals("stop")) { // 停止线程
                 daemon.stopServer(args);
-            } else if (command.equals("configtest")) {
+            } else if (command.equals("configtest")) { // 配置测试
                 daemon.load(args);
                 if (null == daemon.getServer()) {
                     System.exit(1);

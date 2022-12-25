@@ -411,11 +411,11 @@ public class Catalina {
         // Configure the actions we will be using
         digester.addObjectCreate("Server",
                                  "org.apache.catalina.core.StandardServer",
-                                 "className");
-        digester.addSetProperties("Server");
+                                 "className"); // 创建StandardServer
+        digester.addSetProperties("Server");//
         digester.addSetNext("Server",
                             "setServer",
-                            "org.apache.catalina.Server");
+                            "org.apache.catalina.Server"); // 设置StandardServer
 
         digester.addObjectCreate("Server/GlobalNamingResources",
                                  "org.apache.catalina.deploy.NamingResourcesImpl");
@@ -718,7 +718,7 @@ public class Catalina {
      */
     public void load() {
 
-        if (loaded) {
+        if (loaded) { // 已加载
             return;
         }
         loaded = true;
@@ -729,22 +729,22 @@ public class Catalina {
         initNaming();
 
         // Parse main server.xml
-        parseServerXml(true);
+        parseServerXml(true); // 解析xml
         Server s = getServer();
         if (s == null) {
             return;
         }
 
-        getServer().setCatalina(this);
+        getServer().setCatalina(this); // 设置Catalina
         getServer().setCatalinaHome(Bootstrap.getCatalinaHomeFile());
         getServer().setCatalinaBase(Bootstrap.getCatalinaBaseFile());
 
         // Stream redirection
-        initStreams();
+        initStreams(); // 初始化流
 
         // Start the new server
         try {
-            getServer().init();
+            getServer().init(); // 初始化服务
         } catch (LifecycleException e) {
             if (throwOnInitFailure) {
                 throw new java.lang.Error(e);
@@ -780,7 +780,7 @@ public class Catalina {
     public void start() {
 
         if (getServer() == null) {
-            load();
+            load(); // 解析xml
         }
 
         if (getServer() == null) {
@@ -792,7 +792,7 @@ public class Catalina {
 
         // Start the new server
         try {
-            getServer().start();
+            getServer().start(); // 启动
         } catch (LifecycleException e) {
             log.fatal(sm.getString("catalina.serverStartFail"), e);
             try {
@@ -845,7 +845,7 @@ public class Catalina {
             // Remove the ShutdownHook first so that server.stop()
             // doesn't get invoked twice
             if (useShutdownHook) {
-                Runtime.getRuntime().removeShutdownHook(shutdownHook);
+                Runtime.getRuntime().removeShutdownHook(shutdownHook); // 移除钩子
 
                 // If JULI is being used, re-enable JULI's shutdown to ensure
                 // log messages are not lost
@@ -869,8 +869,8 @@ public class Catalina {
                     && LifecycleState.DESTROYED.compareTo(state) >= 0) {
                 // Nothing to do. stop() was already called
             } else {
-                s.stop();
-                s.destroy();
+                s.stop(); // 停止
+                s.destroy(); // 销毁
             }
         } catch (LifecycleException e) {
             log.error(sm.getString("catalina.stopError"), e);
